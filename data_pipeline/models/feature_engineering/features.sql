@@ -3,5 +3,5 @@
 {{ config(materialized='table') }}
 
 select *
-from {{ source('ml_schema', 'concrete') }}
+from {{ ref('stg_weather_aus') }}
 
