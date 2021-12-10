@@ -1,5 +1,8 @@
 version: 2
 sources:  
-  - name: ml_schema    
+  - name: raw
+    description: Raw australian weather data.
+    database: raw
+    schema: public
     tables:      
-      - name: weather_aus      
+      - name: weather_aus    

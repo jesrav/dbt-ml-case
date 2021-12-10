@@ -1,13 +1,14 @@
 version: 2
 
 # Testing our raw data
-seeds:
+models:
   - name: stg_weather_aus
-    description: "Raw weather data set"
+    description: "Staged weather data set. Types have been cast and missingg values set to null."
     columns:
       - name: MinTemp
         description: "Minimum temperature."
         tests:
           - dbt_expectations.expect_column_values_to_be_between:
-              min_value: -100
-              max_value: 100
+              min_value: -200
+              max_value: 200
+

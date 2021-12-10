@@ -45,7 +45,7 @@ with nan_converted_to_null as (
             CAST(NULLIF({{ column }}, 'NA') AS INT) AS {{ column }},    
         {% endfor %}
         1 as dummy
-    from {{ source('ml_schema', 'weather_aus') }}
+    from {{ source('raw', 'weather_aus') }}
 )
 
 select * from nan_converted_to_null

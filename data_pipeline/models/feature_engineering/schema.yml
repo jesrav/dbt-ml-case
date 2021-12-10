@@ -1,0 +1,8 @@
+version: 2
+
+# Testing our raw data
+models:
+  - name: features
+    description: "Fatures for training ML model to predict rainfall."
+
+
