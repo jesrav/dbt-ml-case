@@ -28,10 +28,9 @@ jobs:
         run: |
           pip install dbt
           dbt deps --target prod
-      
-      # Add dbt seed or other commands here if needed
-      - name: Test dbt models
-        run: dbt test --target prod
 
       - name: Run dbt models
         run: dbt run --target prod
+
+      - name: Test dbt models
+        run: dbt test --target prod

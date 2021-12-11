@@ -1,5 +1,5 @@
 
-{{ config(materialized='table') }}
+{{ config(materialized='view') }}
 
 {% set columns_to_lag = [
     "MinTemp",
