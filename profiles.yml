@@ -1,18 +1,7 @@
 dbt_ml_case:
-  target: dev
+  target: prod
   outputs:
-    dev:
-      type: snowflake
-      account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT') }}"
 
-      # User/password auth
-      user: "{{ env_var('DBT_SNOWFLAKE_USER') }}"
-      password: "{{ env_var('DBT_SNOWFLAKE_PSW') }}"
-
-      database: analytics
-      warehouse: compute_wh
-      schema: public
-      
     prod:
       type: snowflake
       account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT') }}"
