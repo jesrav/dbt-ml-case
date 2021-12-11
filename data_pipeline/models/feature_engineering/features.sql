@@ -26,7 +26,7 @@ select Location,
     
     lag(rainfall, 1, 0) over (partition by location order by location, date) as rainyesterday, 
 
-    CURRENT_TIMESTAMP() as created_at
+    sysdate() as created_at
 
 from {{ ref('stg_weather_aus') }}
 

@@ -44,7 +44,7 @@ with nan_converted_to_null as (
         {% for column in int_columns %}    
             CAST(NULLIF({{ column }}, 'NA') AS INT) AS {{ column }},    
         {% endfor %}
-        CURRENT_TIMESTAMP() as created_at
+        sysdate() as created_at
     from {{ source('raw', 'weather_aus') }}
 )
 
