@@ -1,7 +1,7 @@
 dbt_ml_case:
-  target: prod
+  target: dev
   outputs:
-    test:
+    dev:
       type: snowflake
       account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT') }}"
 
