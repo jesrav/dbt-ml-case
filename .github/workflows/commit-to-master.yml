@@ -7,6 +7,9 @@ on:
 
 env:
   DBT_PROFILES_DIR: ./
+  DBT_SNOWFLAKE_ACCOUNT: ${{ secrets.DBT_SNOWFLAKE_ACCOUNT }}
+  DBT_SNOWFLAKE_USER: ${{ secrets.DBT_SNOWFLAKE_USER }}
+  DBT_SNOWFLAKE_PSW: ${{ secrets.DBT_SNOWFLAKE_PSW }}
 
 jobs:
   scheduled_run:
