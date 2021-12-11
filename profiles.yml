@@ -1,4 +1,4 @@
-data_pipeline:
+dbt-ml-case:
   target: dev
   outputs:
     dev:
