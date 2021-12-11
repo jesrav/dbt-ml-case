@@ -1,4 +1,4 @@
-dbt-ml-case:
+dbt_ml_case:
   target: dev
   outputs:
     dev:
