@@ -6,19 +6,19 @@ dbt-ml-case:
       account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT') }}"
 
       # User/password auth
-      user: jrl
+      user: "{{ env_var('DBT_SNOWFLAKE_USER') }}"
       password: "{{ env_var('DBT_SNOWFLAKE_PSW') }}"
 
       database: analytics
       warehouse: compute_wh
       schema: public
-
+      
     prod:
       type: snowflake
       account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT') }}"
 
       # User/password auth
-      user: jrl
+      user: "{{ env_var('DBT_SNOWFLAKE_USER') }}"
       password: "{{ env_var('DBT_SNOWFLAKE_PSW') }}"
 
       database: analytics
