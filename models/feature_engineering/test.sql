@@ -1,1 +1,0 @@
-select 1 as dummy, * from {{ ref('stg_weather_aus') }}
