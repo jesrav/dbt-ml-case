@@ -23,9 +23,6 @@
 
 with lagged_features_added as (
     select 
-        {% for column in columns_to_lag %}    
-            lag({{ column }}, 1, 0) over (partition by location order by location, date) as {{ column }}_yesterday, 
-        {% endfor %}
 
         Location,
         WindGustDir,
@@ -49,6 +46,18 @@ with lagged_features_added as (
         Cloud9am,
         Cloud3pm, 
         
+        --Lag columns to get yesterdays value
+        {% for column in columns_to_lag %}    
+            lag({{ column }}, 1, 0) over (partition by location order by location, date) as {{ column }}_yesterday, 
+        {% endfor %}
+
+        --Create roling mean of column values
+        {% for column in columns_to_lag %}  
+            avg({{ column }}) OVER(partition by Location ORDER BY Location, DATE
+                ROWS BETWEEN 5 PRECEDING AND CURRENT ROW)
+                as {{ column }}_5d_ma,
+        {% endfor %}
+
         sysdate() as created_at
 
     from {{ ref('stg_weather_aus') }}
