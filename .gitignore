@@ -1,5 +1,7 @@
-
 target/
 dbt_modules/
 logs/
 data/weather_aus
+
+.env
+**/__pycache__
