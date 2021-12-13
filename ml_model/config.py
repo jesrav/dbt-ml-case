@@ -21,7 +21,4 @@ class ProdConfig(Config):
     SNOWFLAKE_SCHEMA = "public"
 
 
-if os.environ["ENVIRONMENT"] == 'prod':
-    config = ProdConfig
-else:
-    config = DevConfig
+config = ProdConfig if os.environ["ENVIRONMENT"] == 'prod' else DevConfig
