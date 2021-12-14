@@ -87,6 +87,7 @@ ml_pipeline = Pipeline([
 
 
 def get_feature_names(ml_pipeline):
+    ml_pipeline["feature_preprocess"].transformer_list[0][1][1].feature_names_in_ = CATEGORICAL_COLS
     return (
         ml_pipeline["feature_preprocess"].transformer_list[0][1][1].get_feature_names_out().tolist()
         + NUMERICAL_COLS
