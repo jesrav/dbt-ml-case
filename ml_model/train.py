@@ -1,13 +1,16 @@
+from pprint import pprint
+
 import snowflake.connector
 import pandas as pd
-import numpy as np
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import FeatureUnion, Pipeline
-from sklearn.impute import SimpleImputer
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 
+from model_config import ml_pipeline, get_feature_importances
 from config import config
+
+
+TARGET_COL = "RAINTOMORROW"
+TARGET_COL_ENCODED = "RAINTOMORROW_ENC"
 
 
 def get_connection():
@@ -23,6 +26,10 @@ def read_features(connection):
     return pd.read_sql(SQL, connection)
 
 
+def create_encoded_target(df, col):
+    return df[col].replace({"Yes": 1, "No": 0})
+
+
 def drop_missing_targets(df, target_col):
     return df.dropna(subset=[target_col])
 
@@ -31,36 +38,15 @@ cnx = get_connection()
 
 df = read_features(cnx)
 
-target_col = "RAINTOMORROW"
-feature_cols = [col for col in df.columns if col not in [target_col, "DATE", "CREATED_AT"]]
-categirocal_features = ['LOCATION','WINDGUSTDIR', 'WINDDIR3PM', 'RAINTODAY']
-numerical_features = [col for col in feature_cols if col not in categirocal_features]
+df = drop_missing_targets(df, target_col=TARGET_COL)
 
-df = drop_missing_targets(df, target_col)
+df[TARGET_COL_ENCODED] = create_encoded_target(df, col=TARGET_COL)
 
-target = df[target_col]
-features = df[feature_cols]
+train, test = train_test_split(df)
+ml_pipeline.fit(train, train[TARGET_COL_ENCODED])
 
-categorical_feature_pipeline = Pipeline([
-        ("column_selector", ColumnTransformer(transformers=[('selector', 'passthrough', categirocal_features)], remainder="drop")),
-        ('encoding', OneHotEncoder()),
-        ('imputation', SimpleImputer(missing_values=np.nan, strategy='most_frequent'))
-])
+predictions = ml_pipeline.predict(test)
 
-numerical_feature_pipeline = Pipeline([
-        ("column_selector", ColumnTransformer(transformers=[('selector', 'passthrough', numerical_features)], remainder="drop")),
-        ('imputation', SimpleImputer(missing_values=np.nan, strategy='mean'))
-])
+print(classification_report(test[TARGET_COL_ENCODED], predictions))
 
-
-feature_union = FeatureUnion([
-    ("categorical", categorical_feature_pipeline),
-    ("non_categorical", numerical_feature_pipeline)
-])
-
-ml_pipeline = Pipeline([
-    ("feature_preprocess", feature_union),
-    ("classifier", RandomForestClassifier())
-])
-
-ml_pipeline.fit(features, target)
+pprint(get_feature_importances(ml_pipeline))
