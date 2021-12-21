@@ -1,13 +1,20 @@
-from pprint import pprint
+import json 
+import pickle
 
 import snowflake.connector
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
+import numpy as np
 
 from model_config import ml_pipeline, get_feature_importances
 from config import config
 
+pd.set_option("display.max_rows", None, "display.max_columns", None)
+
+CLASSIFICATION_REPORT_PATH = "artifacts/classification_report.json"
+FEATURE_IMPORTANCE_PATH = "artifacts/feature_importances.csv"
+MODEL_PATH = "artifacts/model.pickle"
 
 TARGET_COL = "RAINTOMORROW"
 TARGET_COL_ENCODED = "RAINTOMORROW_ENC"
@@ -26,6 +33,10 @@ def read_features(connection):
     return pd.read_sql(SQL, connection)
 
 
+def convert_non_to_nan(df):
+    return df.replace([None], np.nan, inplace=False)
+
+
 def create_encoded_target(df, col):
     return df[col].replace({"Yes": 1, "No": 0})
 
@@ -34,19 +45,36 @@ def drop_missing_targets(df, target_col):
     return df.dropna(subset=[target_col])
 
 
-cnx = get_connection()
+def main():
+    cnx = get_connection()
 
-df = read_features(cnx)
+    print("Read and preprocess modelling data.")
+    df = read_features(cnx)
 
-df = drop_missing_targets(df, target_col=TARGET_COL)
+    df = convert_non_to_nan(df)
 
-df[TARGET_COL_ENCODED] = create_encoded_target(df, col=TARGET_COL)
+    df = drop_missing_targets(df, target_col=TARGET_COL)
 
-train, test = train_test_split(df)
-ml_pipeline.fit(train, train[TARGET_COL_ENCODED])
+    df[TARGET_COL_ENCODED] = create_encoded_target(df, col=TARGET_COL)
 
-predictions = ml_pipeline.predict(test)
+    print("Train model.")
+    train, test = train_test_split(df)
+    ml_pipeline.fit(train, train[TARGET_COL_ENCODED])
 
-print(classification_report(test[TARGET_COL_ENCODED], predictions))
+    print("Evaluate model on hold out set and save artifacts.")
+    predictions = ml_pipeline.predict(test)
 
-pprint(get_feature_importances(ml_pipeline))
+    with open(CLASSIFICATION_REPORT_PATH, "w") as f:
+        json.dump(
+            classification_report(test[TARGET_COL_ENCODED], predictions, output_dict=True), f
+        )
+    
+    with open(CLASSIFICATION_REPORT_PATH, "wb") as f:
+        pickle.dump(ml_pipeline, f)
+    
+    get_feature_importances(ml_pipeline).to_csv(FEATURE_IMPORTANCE_PATH)
+
+if __name__ == "__main__":
+    main()
+
+

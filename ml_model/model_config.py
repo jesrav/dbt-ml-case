@@ -1,4 +1,4 @@
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import FeatureUnion, Pipeline
@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 FEATURE_COLS = [
-    'LOCATION', 
+    #'LOCATION', 
     'WINDGUSTDIR', 
     'WINDDIR3PM', 
     'RAINTODAY', 
@@ -43,30 +43,30 @@ FEATURE_COLS = [
     # 'HUMIDITY3PM_YESTERDAY', 
     # 'CLOUD9AM_YESTERDAY', 
     # 'CLOUD3PM_YESTERDAY',
-    # 'MINTEMP_5D_MA', 
-    # 'MAXTEMP_5D_MA',
-    # 'RAINFALL_5D_MA', 
-    # 'EVAPORATION_5D_MA', 
-    # 'SUNSHINE_5D_MA', 
-    # 'PRESSURE9AM_5D_MA', 
-    # 'PRESSURE3PM_5D_MA', 
-    # 'TEMP9AM_5D_MA',
-    # 'TEMP3PM_5D_MA', 
-    # 'WINDGUSTSPEED_5D_MA', 
-    # 'WINDSPEED9AM_5D_MA', 
-    # 'WINDSPEED3PM_5D_MA', 
-    # 'HUMIDITY9AM_5D_MA', 
-    # 'HUMIDITY3PM_5D_MA', 
-    # 'CLOUD9AM_5D_MA', 
-    # 'CLOUD3PM_5D_MA'
+    'MINTEMP_5D_MA', 
+    'MAXTEMP_5D_MA',
+    'RAINFALL_5D_MA', 
+    'EVAPORATION_5D_MA', 
+    'SUNSHINE_5D_MA', 
+    'PRESSURE9AM_5D_MA', 
+    'PRESSURE3PM_5D_MA', 
+    'TEMP9AM_5D_MA',
+    'TEMP3PM_5D_MA', 
+    'WINDGUSTSPEED_5D_MA', 
+    'WINDSPEED9AM_5D_MA', 
+    'WINDSPEED3PM_5D_MA', 
+    'HUMIDITY9AM_5D_MA', 
+    'HUMIDITY3PM_5D_MA', 
+    'CLOUD9AM_5D_MA', 
+    'CLOUD3PM_5D_MA'
 ]
 CATEGORICAL_COLS = ['LOCATION','WINDGUSTDIR', 'WINDDIR3PM', 'RAINTODAY']
 NUMERICAL_COLS = [col for col in FEATURE_COLS if col not in CATEGORICAL_COLS]
 
 categorical_feature_pipeline = Pipeline([
         ("column_selector", ColumnTransformer(transformers=[('selector', 'passthrough', CATEGORICAL_COLS)], remainder="drop")),
+        ('imputation', SimpleImputer(missing_values=np.nan, strategy='most_frequent')),
         ('encoding', OneHotEncoder()),
-        ('imputation', SimpleImputer(missing_values=np.nan, strategy='most_frequent'))
 ])
 
 numerical_feature_pipeline = Pipeline([
@@ -87,9 +87,9 @@ ml_pipeline = Pipeline([
 
 
 def get_feature_names(ml_pipeline):
-    ml_pipeline["feature_preprocess"].transformer_list[0][1][1].feature_names_in_ = CATEGORICAL_COLS
+    ml_pipeline["feature_preprocess"].transformer_list[0][1][2].feature_names_in_ = CATEGORICAL_COLS
     return (
-        ml_pipeline["feature_preprocess"].transformer_list[0][1][1].get_feature_names_out().tolist()
+        ml_pipeline["feature_preprocess"].transformer_list[0][1][2].get_feature_names_out().tolist()
         + NUMERICAL_COLS
     )
 

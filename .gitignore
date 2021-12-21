@@ -5,3 +5,7 @@ data/weather_aus
 
 .env
 **/__pycache__
+ml_model/artifacts/**/*.json
+ml_model/artifacts/**/*.pickle
+ml_model/artifacts/**/*.jpg
+ml_model/artifacts/**/*.csv
