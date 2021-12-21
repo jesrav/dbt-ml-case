@@ -5,3 +5,4 @@ data/weather_aus
 
 .env
 **/__pycache__
+.idea
