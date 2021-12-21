@@ -9,3 +9,4 @@ ml_model/artifacts/**/*.json
 ml_model/artifacts/**/*.pickle
 ml_model/artifacts/**/*.jpg
 ml_model/artifacts/**/*.csv
+.idea
