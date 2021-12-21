@@ -2,3 +2,4 @@ sklearn
 snowflake-connector-python
 python-dotenv
 pandas
+sklearn2pmml

@@ -6,6 +6,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 import numpy as np
+from sklearn2pmml import sklearn2pmml
 
 from model_config import ml_pipeline, get_feature_importances
 from config import config
@@ -69,10 +70,12 @@ def main():
             classification_report(test[TARGET_COL_ENCODED], predictions, output_dict=True), f
         )
     
-    with open(CLASSIFICATION_REPORT_PATH, "wb") as f:
+    with open(MODEL_PATH, "wb") as f:
         pickle.dump(ml_pipeline, f)
     
     get_feature_importances(ml_pipeline).to_csv(FEATURE_IMPORTANCE_PATH)
+
+    sklearn2pmml(ml_pipeline, "artifacts/model.pmml", with_repr = True)
 
 if __name__ == "__main__":
     main()

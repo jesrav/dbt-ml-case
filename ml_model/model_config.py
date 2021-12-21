@@ -1,8 +1,9 @@
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import FeatureUnion, Pipeline
+from sklearn.pipeline import FeatureUnion
 from sklearn.impute import SimpleImputer
+from sklearn2pmml.pipeline import PMMLPipeline
 import numpy as np
 import pandas as pd
 
@@ -63,13 +64,13 @@ FEATURE_COLS = [
 CATEGORICAL_COLS = ['LOCATION','WINDGUSTDIR', 'WINDDIR3PM', 'RAINTODAY']
 NUMERICAL_COLS = [col for col in FEATURE_COLS if col not in CATEGORICAL_COLS]
 
-categorical_feature_pipeline = Pipeline([
+categorical_feature_pipeline = PMMLPipeline([
         ("column_selector", ColumnTransformer(transformers=[('selector', 'passthrough', CATEGORICAL_COLS)], remainder="drop")),
         ('imputation', SimpleImputer(missing_values=np.nan, strategy='most_frequent')),
         ('encoding', OneHotEncoder()),
 ])
 
-numerical_feature_pipeline = Pipeline([
+numerical_feature_pipeline = PMMLPipeline([
         ("column_selector", ColumnTransformer(transformers=[('selector', 'passthrough', NUMERICAL_COLS)], remainder="drop")),
         ('imputation', SimpleImputer(missing_values=np.nan, strategy='mean'))
 ])
@@ -80,7 +81,7 @@ feature_union = FeatureUnion([
     ("non_categorical", numerical_feature_pipeline)
 ])
 
-ml_pipeline = Pipeline([
+ml_pipeline = PMMLPipeline([
     ("feature_preprocess", feature_union),
     ("classifier", RandomForestClassifier())
 ])
